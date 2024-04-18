@@ -20,6 +20,7 @@ type APIRestStudent struct {
 	service service.IStudentService
 }
 
+// The function of this Handler "class" is to interact at api response level get the body/query params to later pass this info to the usecase level, and to deliver the response the user needs
 func NewAPI(service service.IStudentService) *APIRestStudent {
 	return &APIRestStudent{service: service}
 }

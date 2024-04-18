@@ -7,6 +7,8 @@ import (
 	"github.com/Leoo05/test_go/internal/infrastructure/secondary/postgreDatabase/models"
 )
 
+//This repository class its the one to interact with the database and get the info to response the usecase class
+
 func (adapter *DBAdapter) CreateStudent(student *entities.Student) error {
 	modelStudent := &models.Student{
 		IDStudent: student.IDStudent,

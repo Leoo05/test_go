@@ -17,6 +17,8 @@ func NewStudentCase(studentRepository repository.IStudentRepository) *StudentUse
 	}
 }
 
+// Use case application this cape is used to define the usecase of the application and validate some of its values at application level
+
 func (usecase *StudentUseCase) PostStudent(student *entities.Student) error {
 	err := usecase.StudentRepository.CreateStudent(student)
 	if err != nil {
