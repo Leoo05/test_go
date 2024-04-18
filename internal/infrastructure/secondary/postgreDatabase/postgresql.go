@@ -1,86 +1,29 @@
 package postgreDatabase
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/uptrace/bun"
-
 	"os"
 
-	"github.com/uptrace/bun/migrate"
-
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
-
-	// postgres driver
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var instance *bun.DB
+var instance *gorm.DB
 
-var Migrations = migrate.NewMigrations()
-
-var ctx = context.Background()
-
-// GetDB returns the database single instance
-func GetDB() *bun.DB {
-
+func GetDB() *gorm.DB {
 	if instance == nil {
-		log.Info("creating instance of repository")
-		instance = initDB()
-
-		doMigrations := os.Getenv("DO_MIGRATIONS")
-		if doMigrations == "true" {
-			migrateDB()
-		}
-
+		fmt.Println("creating instance of repository")
+		instance, _ = InitDB()
 	}
 	return instance
 }
 
-func initDB() *bun.DB {
-
-	log.Info("connecting to db")
-
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PWD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"))
-
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(connStr)))
-
-	db := bun.NewDB(sqldb, pgdialect.New())
-	log.Info("connected to db")
-	return db
-}
-func migrateDB() {
-	if err := Migrations.DiscoverCaller(); err != nil {
-		log.Info("discover caller")
-		panic(err)
-	}
-	migrator := migrate.NewMigrator(instance, Migrations)
-	err := migrator.Init(ctx)
+func InitDB() (*gorm.DB, error) {
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PWD"), os.Getenv("DB_NAME"), os.Getenv("DB_PORT"))
+	dsn := connString
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Errorf("error with init migrator, err: %v", err)
-		panic(err)
+		return nil, fmt.Errorf("error connecting to dabase: %s", err.Error())
 	}
-	group, err := migrator.Migrate(ctx)
-	if err != nil {
-		log.Errorf("error with migrate migrator, err: %v", err)
-		panic(err)
-	}
-	if group.IsZero() {
-		fmt.Printf("there are no new migrations to run (database is up to date)\n")
-	}
-	fmt.Printf("migrated to %s\n", group)
-}
-
-// Close closes the database connection
-func Close() {
-	instance.Close()
+	return db, nil
 }

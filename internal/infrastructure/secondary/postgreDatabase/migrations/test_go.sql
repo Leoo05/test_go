@@ -1,6 +1,6 @@
 CREATE TABLE course (
 	id_course serial primary key,
-	course_name varchar NOT NULL,	
+	course_name varchar NOT NULL
 );
 
 CREATE TABLE student (
@@ -28,6 +28,5 @@ CREATE TABLE professor (
 	first_name varchar NOT NULL,
 	last_name varchar NOT NULL,
 	document int NOT NULL,
-	fk_course int NOT NULL,
-	FOREIGN KEY(fk_course) REFERENCES course(id_course)
+	phone bigint NOT NULL
 );
