@@ -13,6 +13,7 @@ type Student struct {
 type Course struct {
 	IDCourse   uint   `gorm:"column:id_course;primaryKey"`
 	CourseName string `gorm:"column:course_name"`
+	CourseCode string `gorm:"column:course_code"`
 }
 
 type Grade struct {
@@ -21,10 +22,11 @@ type Grade struct {
 	Student   Student `gorm:"foreignKey:IDStudent;references:IDStudent"`
 	IDCourse  uint    `gorm:"column:fk_course"`
 	Course    Course  `gorm:"foreignKey:IDCourse;references:IDCourse"`
+	Grade     int     `gorm:"column:grade"`
 }
 
 type Professor struct {
-	IDProfessor uint `gorm:"column:id_professor;primaryKey"`
+	IDProfessor uint `gorm:"column:id;primaryKey"`
 	Name        string
 	FirstName   string `gorm:"column:first_name"`
 	LastName    string `gorm:"column:last_name"`

@@ -1,17 +1,59 @@
 package grade
 
-func CreateGradeUseCase() {
+import (
+	"fmt"
 
+	"github.com/Leoo05/test_go/internal/domain/grade/entities"
+	"github.com/Leoo05/test_go/internal/domain/grade/repository"
+)
+
+type GradeUseCase struct {
+	GradeRepository repository.IGradesRepository
 }
 
-func ReadGradeUseCase() {
-
+func NewGradeCase(gradeRepository repository.IGradesRepository) *GradeUseCase {
+	return &GradeUseCase{
+		GradeRepository: gradeRepository,
+	}
 }
 
-func UpdateGradeUseCase() {
-
+func (usecase *GradeUseCase) PostGrade(grade *entities.Grade) error {
+	err := usecase.GradeRepository.CreateGrade(grade)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func DeleteGradeUseCase() {
+func (usecase *GradeUseCase) GetGradeByID(idGrade int) (*entities.Grade, error) {
+	if idGrade <= 0 {
+		return &entities.Grade{}, fmt.Errorf("error invalid idGrade")
+	}
+	grade, err := usecase.GradeRepository.ReadGrade(idGrade)
+	if err != nil {
+		return &entities.Grade{}, err
+	}
+	return grade, nil
+}
 
+func (usecase *GradeUseCase) PutGrade(idGrade int, grade *entities.Grade) error {
+	if idGrade <= 0 {
+		return fmt.Errorf("error invalid idGrade")
+	}
+	err := usecase.GradeRepository.UpdateGrade(idGrade, grade)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (usecase *GradeUseCase) DeleteGrade(idGrade int) error {
+	if idGrade <= 0 {
+		return fmt.Errorf("error Invalid ID")
+	}
+	err := usecase.GradeRepository.DeleteGrade(idGrade)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,6 +1,7 @@
 CREATE TABLE course (
 	id_course serial primary key,
-	course_name varchar NOT NULL
+	course_name varchar NOT NULL,
+	course_code varchar NOT NULL
 );
 
 CREATE TABLE student (
